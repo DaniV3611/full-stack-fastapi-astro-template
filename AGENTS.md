@@ -1,98 +1,63 @@
 # AGENTS.md - AI Coding Agent Instructions
 
-This is a full-stack FastAPI + React template with a Python backend and TypeScript frontend.
+Full-stack FastAPI + React template with Python backend and TypeScript frontend.
 
 ## Project Structure
 
 ```
-/
-├── backend/           # FastAPI Python backend
-│   ├── app/           # Application code
-│   │   ├── api/       # API routes and dependencies
-│   │   ├── core/      # Config, security, database
-│   │   ├── alembic/   # Database migrations
-│   │   ├── models.py  # SQLModel models + Pydantic schemas
-│   │   └── crud.py    # Database CRUD operations
-│   ├── tests/         # Pytest tests
-│   └── scripts/       # Shell scripts (test.sh, lint.sh, format.sh)
-├── frontend/          # React TypeScript frontend
-│   ├── src/
-│   │   ├── client/    # Auto-generated API client (DO NOT EDIT)
-│   │   ├── components/
-│   │   │   └── ui/    # shadcn/ui components (DO NOT EDIT)
-│   │   ├── hooks/     # Custom React hooks
-│   │   └── routes/    # TanStack Router file-based routes
-│   └── tests/         # Playwright E2E tests
-└── scripts/           # Root-level scripts
+backend/                 # FastAPI Python backend
+├── app/
+│   ├── api/             # Routes (routes/) and dependencies (deps.py)
+│   ├── core/            # Config, security, database
+│   ├── alembic/         # Database migrations
+│   ├── models.py        # SQLModel models + Pydantic schemas
+│   └── crud.py          # Database CRUD operations
+├── tests/               # Pytest tests
+└── scripts/             # test.sh, lint.sh, format.sh
+
+frontend/                # React TypeScript frontend
+├── src/
+│   ├── client/          # Auto-generated API client (DO NOT EDIT)
+│   ├── components/ui/   # shadcn/ui components (DO NOT EDIT)
+│   ├── hooks/           # Custom React hooks
+│   └── routes/          # TanStack Router file-based routes
+└── tests/               # Playwright E2E tests
 ```
 
 ## Build/Lint/Test Commands
 
-### Backend (Python/FastAPI)
-
-Working directory: `backend/`
+### Backend (working directory: `backend/`)
 
 ```bash
-# Run all tests with coverage
-uv run bash scripts/test.sh
+uv run bash scripts/test.sh                              # Run all tests with coverage
+uv run pytest tests/api/routes/test_users.py -v          # Single test file
+uv run pytest tests/api/routes/test_users.py::test_get_users_superuser_me -v  # Single test
+uv run pytest -k "test_create" -v                        # Tests matching pattern
 
-# Run a single test file
-uv run pytest tests/api/routes/test_items.py -v
-
-# Run a single test function
-uv run pytest tests/api/routes/test_items.py::test_create_item -v
-
-# Run tests matching a pattern
-uv run pytest -k "test_create" -v
-
-# Lint (type check + ruff)
-uv run bash scripts/lint.sh
-
-# Format code
-uv run bash scripts/format.sh
-
-# Start dev server
-uv run fastapi dev app/main.py
+uv run bash scripts/lint.sh                              # Lint (mypy + ruff)
+uv run bash scripts/format.sh                            # Format code
+uv run fastapi dev app/main.py                           # Start dev server
 ```
 
-### Frontend (React/TypeScript)
-
-Working directory: `frontend/` (or root with bun workspaces)
+### Frontend (working directory: `frontend/`)
 
 ```bash
-# Run all Playwright tests
-bun run test
+bun run test                                             # Run all Playwright tests
+bunx playwright test tests/login.spec.ts                 # Single test file
+bunx playwright test --grep "create item"                # Tests matching pattern
+bun run test:ui                                          # Tests with UI
 
-# Run a single test file
-bunx playwright test tests/items.spec.ts
-
-# Run tests matching a pattern
-bunx playwright test --grep "create item"
-
-# Run tests with UI
-bun run test:ui
-
-# Lint and auto-fix
-bun run lint
-
-# Build
-bun run build
-
-# Generate API client from backend OpenAPI
-bun run generate-client
-
-# Start dev server
-bun run dev
+bun run lint                                             # Lint and auto-fix (Biome)
+bun run build                                            # Build for production
+bun run generate-client                                  # Generate API client from OpenAPI
+bun run dev                                              # Start dev server
 ```
 
-### Docker Compose (Full Stack)
+### Docker Compose
 
 ```bash
-# Start the full stack with hot reload
-docker compose watch
-
-# Run all tests in containers
-./scripts/test.sh
+docker compose watch                                     # Start full stack with hot reload
+./scripts/test.sh                                        # Run all tests in containers
 ```
 
 ## Code Style Guidelines
@@ -100,82 +65,76 @@ docker compose watch
 ### Backend (Python)
 
 **Formatting & Linting:**
-- Formatter: Ruff (line length not enforced)
-- Linter: Ruff + mypy (strict mode)
+- Ruff for formatting and linting, mypy strict mode for type checking
 - Target: Python 3.10+
 
 **Import Order:**
-1. Standard library (`uuid`, `typing`, `datetime`)
+1. Standard library (`uuid`, `typing`, `collections.abc`)
 2. Third-party (`fastapi`, `sqlmodel`, `pydantic`)
-3. Local app imports (`app.api.deps`, `app.models`, `app.core`)
+3. Local imports (`app.api.deps`, `app.models`, `app.core`)
 
 **Naming Conventions:**
-- Functions: `snake_case` (`get_user_by_email`, `create_item`)
-- Classes: `PascalCase` (`UserCreate`, `ItemPublic`)
+- Functions/variables: `snake_case`
+- Classes: `PascalCase`
 - Type aliases: `PascalCase` with `Annotated` (`CurrentUser`, `SessionDep`)
-- Database models: Singular nouns (`User`, `Item`)
+- Database models: Singular (`User`, `Item`)
 - API schemas: `{Model}Create`, `{Model}Update`, `{Model}Public`, `{Model}sPublic`
 
 **Type Annotations:**
 - Full type hints required on all functions
-- Use modern union syntax: `str | None` (not `Optional[str]`)
+- Use `str | None` (not `Optional[str]`)
 - Use `Annotated` for dependency injection
-- Route handlers may return `Any`
+- Route handlers return `Any`
 
 **Error Handling:**
-- Raise `HTTPException` directly with appropriate status codes
-- Use clear, user-friendly error messages
-- Common codes: 400 (bad request), 403 (forbidden), 404 (not found), 409 (conflict)
+- Raise `HTTPException` with codes: 400 (bad request), 403 (forbidden), 404 (not found), 409 (conflict)
 
-**Example:**
+**Example Route:**
 ```python
 from typing import Any
 from fastapi import APIRouter, HTTPException
-from sqlmodel import select
 from app.api.deps import CurrentUser, SessionDep
-from app.models import Item, ItemCreate, ItemPublic
+from app.models import User, UserCreate, UserPublic
 
-router = APIRouter(prefix="/items", tags=["items"])
+router = APIRouter(prefix="/users", tags=["users"])
 
-@router.post("/", response_model=ItemPublic)
-def create_item(*, session: SessionDep, current_user: CurrentUser, item_in: ItemCreate) -> Any:
-    item = Item.model_validate(item_in, update={"owner_id": current_user.id})
-    session.add(item)
+@router.post("/", response_model=UserPublic)
+def create_user(*, session: SessionDep, current_user: CurrentUser, user_in: UserCreate) -> Any:
+    user = User.model_validate(user_in, update={"owner_id": current_user.id})
+    session.add(user)
     session.commit()
-    session.refresh(item)
-    return item
+    session.refresh(user)
+    return user
 ```
 
 ### Frontend (TypeScript/React)
 
 **Formatting & Linting:**
-- Formatter: Biome (spaces, double quotes, semicolons only when needed)
-- Linter: Biome with recommended rules
-- TypeScript: Strict mode enabled
+- Biome: spaces, double quotes, semicolons only as needed
+- TypeScript strict mode enabled
 
 **Import Order:**
 1. External packages (`react`, `@tanstack/*`, `zod`)
 2. Internal imports using `@/` alias (`@/client`, `@/components/*`, `@/hooks/*`)
 
 **Naming Conventions:**
-- Components: `PascalCase` files and names (`AddItem.tsx`, `UserSettings.tsx`)
-- Hooks: `camelCase` with `use` prefix (`useAuth.ts`, `useCustomToast.ts`)
-- Utilities: `camelCase` (`utils.ts`)
+- Components: `PascalCase` files (`AddUser.tsx`)
+- Hooks: `camelCase` with `use` prefix (`useAuth.ts`)
 - Types/Interfaces: `PascalCase`
 
 **Component Patterns:**
 - Functional components only
 - React Hook Form + Zod for form validation
-- TanStack Query for server state (`useQuery`, `useMutation`, `useSuspenseQuery`)
-- Query invalidation after mutations
+- TanStack Query for server state
+- Invalidate queries after mutations
 
-**Error Handling:**
+**Example Mutation:**
 ```typescript
 const mutation = useMutation({
-  mutationFn: (data: ItemCreate) => ItemsService.createItem({ requestBody: data }),
-  onSuccess: () => showSuccessToast("Item created"),
+  mutationFn: (data: UserCreate) => UsersService.createUser({ requestBody: data }),
+  onSuccess: () => showSuccessToast("User created"),
   onError: handleError.bind(showErrorToast),
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ["items"] }),
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
 })
 ```
 
@@ -186,33 +145,30 @@ const mutation = useMutation({
 
 ## Database Migrations
 
+Migrations must be run via Docker Compose to access the database:
+
 ```bash
-# Create a new migration (from backend/)
-uv run alembic revision --autogenerate -m "description"
-
-# Apply migrations
-uv run alembic upgrade head
-
-# Rollback one migration
-uv run alembic downgrade -1
+docker compose exec backend alembic revision --autogenerate -m "description"  # Create migration
+docker compose exec backend alembic upgrade head                              # Apply migrations
+docker compose exec backend alembic downgrade -1                              # Rollback one
 ```
 
 ## API Client Generation
 
 After modifying backend API endpoints:
 ```bash
-# Backend must be running for OpenAPI spec
+# Backend must be running
 cd frontend && bun run generate-client
 ```
 
 ## Testing Patterns
 
 **Backend (pytest):**
-- Fixtures defined in `conftest.py`
+- Fixtures in `conftest.py`: `db`, `client`, `superuser_token_headers`, `normal_user_token_headers`
 - Use `client` fixture for API testing
-- Use `superuser_token_headers` for authenticated requests
+- Mock external services with `unittest.mock.patch`
 
 **Frontend (Playwright):**
 - E2E tests in `frontend/tests/`
-- Helper utilities in `tests/utils/`
-- Auth state stored via `auth.setup.ts`
+- Utilities in `tests/utils/`
+- Auth state via `auth.setup.ts`
