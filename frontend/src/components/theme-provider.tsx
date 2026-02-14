@@ -4,112 +4,132 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react"
+  type ReactNode,
+} from "react";
 
-export type Theme = "dark" | "light" | "system"
+export type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {
-  children: React.ReactNode
-  defaultTheme?: Theme
-  storageKey?: string
-}
+  children: ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
+};
 
 type ThemeProviderState = {
-  theme: Theme
-  resolvedTheme: "dark" | "light"
-  setTheme: (theme: Theme) => void
-}
+  theme: Theme;
+  resolvedTheme: "dark" | "light";
+  setTheme: (theme: Theme) => void;
+};
 
 const initialState: ThemeProviderState = {
   theme: "system",
   resolvedTheme: "light",
   setTheme: () => null,
-}
+};
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vite-ui-theme",
-  ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
-  )
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") {
+      return defaultTheme;
+    }
 
-  const getResolvedTheme = useCallback((theme: Theme): "dark" | "light" => {
-    if (theme === "system") {
+    return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+  });
+
+  const getResolvedTheme = useCallback((value: Theme): "dark" | "light" => {
+    if (typeof window === "undefined") {
+      return "light";
+    }
+
+    if (value === "system") {
       return window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
-        : "light"
+        : "light";
     }
-    return theme
-  }, [])
+
+    return value;
+  }, []);
 
   const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">(() =>
     getResolvedTheme(theme),
-  )
+  );
 
   const updateTheme = useCallback((newTheme: Theme) => {
-    const root = window.document.documentElement
+    if (typeof window === "undefined") {
+      return;
+    }
 
-    root.classList.remove("light", "dark")
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
 
     if (newTheme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
         ? "dark"
-        : "light"
+        : "light";
 
-      root.classList.add(systemTheme)
-      return
+      root.classList.add(systemTheme);
+      return;
     }
 
-    root.classList.add(newTheme)
-  }, [])
+    root.classList.add(newTheme);
+  }, []);
 
   useEffect(() => {
-    updateTheme(theme)
-    setResolvedTheme(getResolvedTheme(theme))
+    updateTheme(theme);
+    setResolvedTheme(getResolvedTheme(theme));
 
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const handleChange = () => {
       if (theme === "system") {
-        updateTheme("system")
-        setResolvedTheme(getResolvedTheme("system"))
+        updateTheme("system");
+        setResolvedTheme(getResolvedTheme("system"));
       }
-    }
+    };
 
-    mediaQuery.addEventListener("change", handleChange)
+    mediaQuery.addEventListener("change", handleChange);
 
     return () => {
-      mediaQuery.removeEventListener("change", handleChange)
-    }
-  }, [theme, updateTheme, getResolvedTheme])
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, [theme, updateTheme, getResolvedTheme]);
 
   const value = {
     theme,
     resolvedTheme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+    setTheme: (newTheme: Theme) => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(storageKey, newTheme);
+      }
+
+      setTheme(newTheme);
     },
-  }
+  };
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <ThemeProviderContext.Provider value={value}>
       {children}
     </ThemeProviderContext.Provider>
-  )
+  );
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
+  const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider")
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
 
-  return context
-}
+  return context;
+};

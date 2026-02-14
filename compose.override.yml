@@ -88,7 +88,7 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - VITE_API_URL=http://localhost:8000
+        - PUBLIC_API_URL=http://localhost:8000
         - NODE_ENV=development
 
 # Service initially disabled, to be enabled later
@@ -97,7 +97,7 @@ services:
 #     context: .
 #     dockerfile: frontend/Dockerfile.playwright
 #     args:
-#       - VITE_API_URL=http://backend:8000
+#       - PUBLIC_API_URL=http://backend:8000
 #       - NODE_ENV=production
 #   ipc: host
 #   depends_on:
@@ -106,7 +106,7 @@ services:
 #   env_file:
 #     - .env
 #   environment:
-#     - VITE_API_URL=http://backend:8000
+#     - PUBLIC_API_URL=http://backend:8000
 #     - MAILCATCHER_HOST=http://mailcatcher:1080
 #     # For the reports when run locally
 #     - PLAYWRIGHT_HTML_HOST=0.0.0.0
