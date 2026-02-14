@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import useAuth from "@/hooks/useAuth";
+import { navigateTo } from "@/lib/navigation";
 import { getInitials } from "@/utils";
 
 export function UserMenu({ user }: { user: UserPublic | null | undefined }) {
@@ -76,7 +77,7 @@ export function UserMenu({ user }: { user: UserPublic | null | undefined }) {
             <DropdownMenuItem
               onClick={() => {
                 handleMenuClick();
-                window.location.assign("/settings");
+                navigateTo("/dashboard/settings");
               }}
             >
               <Settings className="size-4" />

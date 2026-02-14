@@ -113,6 +113,9 @@ export function ThemeProvider({
         localStorage.setItem(storageKey, newTheme);
       }
 
+      updateTheme(newTheme);
+      setResolvedTheme(getResolvedTheme(newTheme));
+
       setTheme(newTheme);
     },
   };

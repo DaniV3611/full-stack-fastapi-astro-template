@@ -1,0 +1,8 @@
+---
+import { DashboardApp } from "@/components/pages/dashboard/DashboardApp";
+import DashboardLayout from "@/layouts/dashboard-layout.astro";
+---
+
+<DashboardLayout title="Dashboard - FastAPI Cloud">
+  <DashboardApp client:load transition:persist="dashboard-app" />
+</DashboardLayout>

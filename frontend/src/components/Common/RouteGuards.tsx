@@ -6,7 +6,7 @@ import { replaceTo } from "@/lib/navigation";
 export function GuestOnly({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isLoggedIn()) {
-      replaceTo("/");
+      replaceTo("/dashboard");
     }
   }, []);
 
@@ -49,7 +49,7 @@ export function RequireSuperuser({ children }: { children: ReactNode }) {
     }
 
     if (!isLoadingUser && user && !user.is_superuser) {
-      replaceTo("/");
+      replaceTo("/dashboard");
     }
   }, [isLoadingUser, user]);
 

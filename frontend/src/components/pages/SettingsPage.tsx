@@ -356,7 +356,7 @@ function DangerZoneTab() {
   );
 }
 
-function SettingsContent() {
+export function SettingsContent() {
   const { user } = useAuth();
 
   if (!user) {

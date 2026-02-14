@@ -1,0 +1,40 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "../styles/global.css";
+
+const { title = "Dashboard - FastAPI Cloud" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const storageKey = "vite-ui-theme";
+
+        const applyTheme = () => {
+          const storedTheme = localStorage.getItem(storageKey) ?? "system";
+          const resolvedTheme =
+            storedTheme === "system"
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light"
+              : storedTheme;
+
+          document.documentElement.classList.remove("light", "dark");
+          document.documentElement.classList.add(resolvedTheme);
+        };
+
+        document.addEventListener("astro:after-swap", applyTheme);
+        applyTheme();
+      })();
+    </script>
+    <ClientRouter fallback="animate" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

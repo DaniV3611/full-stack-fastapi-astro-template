@@ -1,8 +1,62 @@
 ---
-import Layout from "../layouts/layout.astro";
-import { DashboardPage } from "@/components/pages/DashboardPage";
+import Layout from "@/layouts/layout.astro";
 ---
 
-<Layout title="Dashboard - FastAPI Cloud">
-	<DashboardPage client:load />
+<Layout title="FastAPI + Astro Template">
+  <main class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,oklch(0.96_0.02_200),transparent_55%),radial-gradient(circle_at_80%_20%,oklch(0.92_0.03_130),transparent_40%)] dark:bg-[radial-gradient(circle_at_top,oklch(0.25_0.05_240),transparent_55%),radial-gradient(circle_at_80%_20%,oklch(0.20_0.06_280),transparent_40%)]" />
+    <section class="mx-auto flex min-h-[70svh] w-full max-w-6xl flex-col items-center justify-center gap-8 px-6 py-20 text-center md:py-28">
+      <span class="inline-flex items-center rounded-full border px-4 py-1 text-sm text-muted-foreground">
+        FastAPI + Astro + React
+      </span>
+      <h1 class="max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">
+        Full-stack template ready for real products
+      </h1>
+      <p class="max-w-2xl text-base text-muted-foreground md:text-lg">
+        Build faster with JWT auth, OpenAPI-generated clients, role-based dashboard pages,
+        Playwright tests, and a modern UI stack already wired end to end.
+      </p>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <a
+          href="/login"
+          class="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+        >
+          Log In
+        </a>
+        <a
+          href="/signup"
+          class="inline-flex items-center justify-center rounded-md border bg-background px-6 py-3 text-sm font-medium transition hover:bg-muted"
+        >
+          Create Account
+        </a>
+        <a
+          href="/dashboard"
+          class="inline-flex items-center justify-center rounded-md border bg-background px-6 py-3 text-sm font-medium transition hover:bg-muted"
+        >
+          Open Dashboard
+        </a>
+      </div>
+    </section>
+
+    <section class="mx-auto grid w-full max-w-6xl gap-4 px-6 pb-20 md:grid-cols-3 md:pb-28">
+      <article class="rounded-xl border bg-card p-6">
+        <h2 class="text-lg font-semibold">Backend-first API</h2>
+        <p class="mt-2 text-sm text-muted-foreground">
+          FastAPI + SQLModel with typed schemas, migrations, and secure defaults out of the box.
+        </p>
+      </article>
+      <article class="rounded-xl border bg-card p-6">
+        <h2 class="text-lg font-semibold">Productive frontend</h2>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Astro, React, Tailwind, and shadcn/ui with generated API clients and strict TypeScript.
+        </p>
+      </article>
+      <article class="rounded-xl border bg-card p-6">
+        <h2 class="text-lg font-semibold">Ready for teams</h2>
+        <p class="mt-2 text-sm text-muted-foreground">
+          Auth flows, superuser admin panel, and E2E test coverage to start shipping safely.
+        </p>
+      </article>
+    </section>
+  </main>
 </Layout>

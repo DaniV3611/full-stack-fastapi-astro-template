@@ -11,6 +11,7 @@ import { ApiError } from "@/client";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { configureApiClient } from "@/lib/api";
+import { replaceTo } from "@/lib/navigation";
 
 function handleApiError(error: Error) {
   if (!(error instanceof ApiError)) {
@@ -26,7 +27,7 @@ function handleApiError(error: Error) {
   }
 
   localStorage.removeItem("access_token");
-  window.location.replace("/login");
+  replaceTo("/login");
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {

@@ -72,7 +72,7 @@ function ResetPasswordContent() {
 
   useEffect(() => {
     if (isLoggedIn()) {
-      replaceTo("/");
+      replaceTo("/dashboard");
       return;
     }
 

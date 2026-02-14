@@ -36,20 +36,20 @@ export function ProtectedLayout({
   user: UserPublic | null | undefined;
 }) {
   const path = typeof window === "undefined" ? "/" : window.location.pathname;
-  const navItems: NavItem[] = [{ href: "/", label: "Dashboard", icon: Home }];
+  const navItems: NavItem[] = [{ href: "/dashboard", label: "Dashboard", icon: Home }];
 
   if (user?.is_superuser) {
-    navItems.push({ href: "/admin", label: "Admin", icon: ShieldUser });
+    navItems.push({ href: "/dashboard/admin", label: "Admin", icon: ShieldUser });
   }
 
-  navItems.push({ href: "/settings", label: "Settings", icon: Settings });
+  navItems.push({ href: "/dashboard/settings", label: "Settings", icon: Settings });
 
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
         <SidebarHeader className="px-4 py-4 group-data-[collapsible=icon]:px-2">
-          <Logo className="group-data-[collapsible=icon]:hidden" />
-          <Logo className="hidden text-xs group-data-[collapsible=icon]:block" />
+          <Logo href="/dashboard" className="group-data-[collapsible=icon]:hidden" />
+          <Logo href="/dashboard" className="hidden text-xs group-data-[collapsible=icon]:block" />
         </SidebarHeader>
 
         <SidebarContent>

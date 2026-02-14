@@ -481,7 +481,7 @@ function UserActionsMenu({ user }: { user: UserPublic }) {
   );
 }
 
-function AdminContent() {
+export function AdminContent() {
   const { user: currentUser } = useAuth();
   const { data, isLoading } = useQuery({
     queryKey: ["users"],

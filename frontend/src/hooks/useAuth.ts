@@ -54,7 +54,7 @@ const useAuth = () => {
     mutationFn: login,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-      navigateTo("/");
+      navigateTo("/dashboard");
     },
     onError: handleError.bind(showErrorToast),
   });

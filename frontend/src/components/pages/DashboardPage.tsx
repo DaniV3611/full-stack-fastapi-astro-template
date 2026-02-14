@@ -3,7 +3,7 @@ import { RequireAuth } from "@/components/common/RouteGuards";
 import { AppProviders } from "@/components/providers/AppProviders";
 import useAuth from "@/hooks/useAuth";
 
-function DashboardContent() {
+export function DashboardContent() {
   const { user } = useAuth();
 
   return (

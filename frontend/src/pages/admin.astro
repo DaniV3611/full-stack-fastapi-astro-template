@@ -1,8 +1,3 @@
 ---
-import Layout from "@/layouts/layout.astro";
-import { AdminPage } from "@/components/pages/AdminPage";
+return Astro.redirect("/dashboard/admin");
 ---
-
-<Layout title="Admin - FastAPI Cloud">
-  <AdminPage client:load />
-</Layout>
